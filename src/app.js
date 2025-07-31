@@ -20,8 +20,7 @@ createApp({
     fetch('mails-today.json')
       .then(res => res.json())
       .then(data => {
-        this.mails = data.mails || [];
-        this.summary = data.summary || '';
+        this.mails = data;
       })
       .catch(err => {
         console.error('Erreur de chargement JSON :', err);

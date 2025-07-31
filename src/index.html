@@ -26,7 +26,7 @@
           </tr>
         </thead>
         <tbody>
-          <tr v-for="mail in filteredMails" :key="mail.id" class="border-b hover:bg-gray-50">
+          <tr v-for="(mail, idx) in filteredMails" :key="idx" class="border-b hover:bg-gray-50">
             <td class="p-3">{{ mail.from }}</td>
             <td class="p-3">{{ mail.subject }}</td>
             <td class="p-3">{{ mail.date }}</td>
