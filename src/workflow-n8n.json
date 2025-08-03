@@ -42,32 +42,169 @@
     },
     {
       "parameters": {
-        "jsCode": "return {\n  from: $json.From || '',\n  subject: $json.Subject || '',\n  date: new Date(Number($json.internalDate)).toISOString()\n};\n\nconst today = new Date();\ntoday.setHours(0, 0, 0, 0);\nconst tomorrow = new Date(today);\ntomorrow.setDate(today.getDate() + 1);\n\nreturn $input.all().filter(item => {\n  const mailDate = new Date(item.json.date);\n  return mailDate >= today && mailDate < tomorrow;\n});\n\n"
+        "operation": "write",
+        "fileName": "./mails-today.json",
+        "options": {
+          "append": false
+        }
+      },
+      "type": "n8n-nodes-base.readWriteFile",
+      "typeVersion": 1,
+      "position": [
+        1568,
+        -16
+      ],
+      "id": "8c610602-b58d-4b84-903c-412605ab7d95",
+      "name": "Read/Write Files from Disk"
+    },
+    {
+      "parameters": {
+        "jsCode": "const prompt = $input.all().map(item => {\n  return `- ${item.json.Subject} (de ${item.json.From})`;\n}).join(\"\\\\n\");\n\nreturn [{\n  json: {\n    prompt: `Voici les mails reçus aujourd’hui :\\\\n${prompt}\\\\n\\\\nFais un résumé clair et synthétique.`\n  }\n}];\n"
       },
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        432,
+        576,
+        -240
+      ],
+      "id": "45115f71-5525-450b-b7c0-5e6bcffc0fe1",
+      "name": "Code1"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $json.prompt }}",
+        "batching": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chainLlm",
+      "typeVersion": 1.7,
+      "position": [
+        704,
+        -240
+      ],
+      "id": "5c517e9f-a297-4d5b-a0df-cd369dea8539",
+      "name": "Basic LLM Chain"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGroq",
+      "typeVersion": 1,
+      "position": [
+        848,
+        -96
+      ],
+      "id": "f6994a6d-17ff-43a5-8ac5-347b07d3939f",
+      "name": "Groq Chat Model",
+      "credentials": {
+        "groqApi": {
+          "id": "Bp5sH08nvClLPBbn",
+          "name": "Groq account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "c3528953-45d9-4570-9daa-a9bdd9e99e3b",
+              "leftValue": "={{ $json.internalDate }}",
+              "rightValue": "={{ new Date().setHours(0,0,0,0) }}",
+              "operator": {
+                "type": "number",
+                "operation": "gte"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "looseTypeValidation": true,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.filter",
+      "typeVersion": 2.2,
+      "position": [
+        416,
         0
       ],
-      "id": "02fb263f-6092-4fff-884c-6d4c6dafddc1",
-      "name": "Code"
+      "id": "94c87e80-da33-4875-93dc-78c72489ae4a",
+      "name": "Filter"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.2,
+      "position": [
+        1008,
+        -16
+      ],
+      "id": "34164e40-9e7a-4d3b-9c18-4e75cdac502a",
+      "name": "Merge"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "8f0df760-d504-4cbe-97b0-d2fd4819d0cf",
+              "name": "text",
+              "value": "={{ $json.text }}",
+              "type": "string"
+            },
+            {
+              "id": "0d478f4a-3a83-4f25-842c-471f1d9fed2e",
+              "name": "From",
+              "value": "={{ $json.From }}",
+              "type": "string"
+            },
+            {
+              "id": "e2ebe53f-21f0-418b-92b8-e81a034dace7",
+              "name": "Subject",
+              "value": "={{ $json.Subject }}",
+              "type": "string"
+            },
+            {
+              "id": "022e020c-3914-41ed-882c-cfe6082b70b0",
+              "name": "Date",
+              "value": "={{ $json.internalDate }}",
+              "type": "string"
+            }
+          ]
+        },
+        "includeOtherFields": "=",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1200,
+        -16
+      ],
+      "id": "2e01b8cd-a4ca-4b88-81ce-69019e0f071c",
+      "name": "Edit Fields"
     },
     {
       "parameters": {
         "operation": "toJson",
-        "binaryPropertyName": "mail-today",
         "options": {
-          "format": true
+          "fileName": "mails-today"
         }
       },
       "type": "n8n-nodes-base.convertToFile",
       "typeVersion": 1.1,
       "position": [
-        640,
-        0
+        1360,
+        -16
       ],
-      "id": "2e717ec0-f49b-49af-9a9d-3defe72c294d",
+      "id": "2a4cde4f-e8ba-4b5c-9a86-2c511e93b3aa",
       "name": "Convert to File"
     }
   ],
@@ -88,18 +225,89 @@
       "main": [
         [
           {
-            "node": "Code",
+            "node": "Filter",
             "type": "main",
             "index": 0
           }
         ]
       ]
     },
-    "Code": {
+    "Groq Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Basic LLM Chain",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code1": {
+      "main": [
+        [
+          {
+            "node": "Basic LLM Chain",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Filter": {
+      "main": [
+        [
+          {
+            "node": "Code1",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Basic LLM Chain": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Merge": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
       "main": [
         [
           {
             "node": "Convert to File",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Convert to File": {
+      "main": [
+        [
+          {
+            "node": "Read/Write Files from Disk",
             "type": "main",
             "index": 0
           }
@@ -111,7 +319,7 @@
   "settings": {
     "executionOrder": "v1"
   },
-  "versionId": "e98a6243-01de-4991-ac0b-a367bb7aef76",
+  "versionId": "ebd9d30f-07ae-4720-9796-cd6e795034a6",
   "meta": {
     "templateCredsSetupCompleted": true,
     "instanceId": "db0134e2749eaffbe64354442e0a233b5d0595800f23f7c41a0ece262f448180"
