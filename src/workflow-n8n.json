@@ -1,0 +1,121 @@
+{
+  "name": "My workflow",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {},
+            {}
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        0,
+        0
+      ],
+      "id": "f7ce5cf2-ac38-4627-bc86-74c3c519d106",
+      "name": "Schedule Trigger"
+    },
+    {
+      "parameters": {
+        "operation": "getAll",
+        "filters": {}
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        208,
+        0
+      ],
+      "id": "f70047f3-d5e9-485a-9c20-d0ec54b3a716",
+      "name": "Get many messages",
+      "webhookId": "f71fd76c-ee5c-489e-9c17-607a2af65211",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "RSdqzT3VUrGGD1rC",
+          "name": "Gmail account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "return {\n  from: $json.From || '',\n  subject: $json.Subject || '',\n  date: new Date(Number($json.internalDate)).toISOString()\n};\n\nconst today = new Date();\ntoday.setHours(0, 0, 0, 0);\nconst tomorrow = new Date(today);\ntomorrow.setDate(today.getDate() + 1);\n\nreturn $input.all().filter(item => {\n  const mailDate = new Date(item.json.date);\n  return mailDate >= today && mailDate < tomorrow;\n});\n\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        432,
+        0
+      ],
+      "id": "02fb263f-6092-4fff-884c-6d4c6dafddc1",
+      "name": "Code"
+    },
+    {
+      "parameters": {
+        "operation": "toJson",
+        "binaryPropertyName": "mail-today",
+        "options": {
+          "format": true
+        }
+      },
+      "type": "n8n-nodes-base.convertToFile",
+      "typeVersion": 1.1,
+      "position": [
+        640,
+        0
+      ],
+      "id": "2e717ec0-f49b-49af-9a9d-3defe72c294d",
+      "name": "Convert to File"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Schedule Trigger": {
+      "main": [
+        [
+          {
+            "node": "Get many messages",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get many messages": {
+      "main": [
+        [
+          {
+            "node": "Code",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code": {
+      "main": [
+        [
+          {
+            "node": "Convert to File",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "e98a6243-01de-4991-ac0b-a367bb7aef76",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "db0134e2749eaffbe64354442e0a233b5d0595800f23f7c41a0ece262f448180"
+  },
+  "id": "oSiyyQvwVZGO8PWu",
+  "tags": []
+}
