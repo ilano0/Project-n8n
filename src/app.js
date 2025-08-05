@@ -16,8 +16,20 @@ createApp({
       );
     }
   },
+  methods: {
+    formatDate(dateStr) {
+      const date = new Date(dateStr);
+      return date.toLocaleString('fr-FR', {
+        day: '2-digit',
+        month: '2-digit',
+        year: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit'
+      });
+    }
+  },
   mounted() {
-    fetch('mails-today.json')
+    fetch('../mails-today.json')
       .then(res => res.json())
       .then(data => {
         const summaryMail = data.find(mail => mail.text);
@@ -27,7 +39,7 @@ createApp({
           .map(mail => ({
             from: mail.From,
             subject: mail.Subject,
-            date: mail.Date
+            date: Number(mail.Date)
           }));
       })
       .catch(err => {
