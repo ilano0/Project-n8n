@@ -34,6 +34,11 @@
         </tbody>
       </table>
     </div>
+
+    <div v-if="summary" class="mt-6 bg-yellow-100 p-4 rounded">
+      <h2 class="text-lg font-semibold mb-2">Résumé IA:</h2>
+      <p>{{ summary }}</p>
+    </div>
   </div>
 
   <script src="app.js"></script>
