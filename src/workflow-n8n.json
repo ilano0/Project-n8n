@@ -3,24 +3,6 @@
   "nodes": [
     {
       "parameters": {
-        "rule": {
-          "interval": [
-            {},
-            {}
-          ]
-        }
-      },
-      "type": "n8n-nodes-base.scheduleTrigger",
-      "typeVersion": 1.2,
-      "position": [
-        0,
-        0
-      ],
-      "id": "f7ce5cf2-ac38-4627-bc86-74c3c519d106",
-      "name": "Schedule Trigger"
-    },
-    {
-      "parameters": {
         "operation": "getAll",
         "filters": {}
       },
@@ -206,21 +188,21 @@
       ],
       "id": "2a4cde4f-e8ba-4b5c-9a86-2c511e93b3aa",
       "name": "Convert to File"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        0,
+        0
+      ],
+      "id": "d25bf8b3-34ce-4051-b66b-958270f98951",
+      "name": "When clicking ‘Execute workflow’"
     }
   ],
   "pinData": {},
   "connections": {
-    "Schedule Trigger": {
-      "main": [
-        [
-          {
-            "node": "Get many messages",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
     "Get many messages": {
       "main": [
         [
@@ -313,13 +295,24 @@
           }
         ]
       ]
+    },
+    "When clicking ‘Execute workflow’": {
+      "main": [
+        [
+          {
+            "node": "Get many messages",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
     }
   },
-  "active": true,
+  "active": false,
   "settings": {
     "executionOrder": "v1"
   },
-  "versionId": "ebd9d30f-07ae-4720-9796-cd6e795034a6",
+  "versionId": "6efa6c2a-7178-4b10-8526-f64f7653fc21",
   "meta": {
     "templateCredsSetupCompleted": true,
     "instanceId": "db0134e2749eaffbe64354442e0a233b5d0595800f23f7c41a0ece262f448180"
