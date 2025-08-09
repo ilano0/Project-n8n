@@ -46,7 +46,7 @@ npm install -g n8n
 Then start n8n:
 
 ```bash
-n8n
+npx n8n
 ```
 
 Access the n8n interface at:
@@ -68,14 +68,7 @@ http://localhost:5678
 
 1. Click on the **"Get many messages"** node.
 2. Select or create a **Gmail account** credential.
-3. Choose **OAuth2** as connection type.
-4. Create a Google Cloud project with Gmail API enabled.
-5. Fill in the **Client ID** and **Client Secret**.
-6. Use the following **Redirect URI**:
-```
-http://localhost:5678/rest/oauth2-credential/callback
-```
-7. Click **Connect** and log in to your Gmail account.
+3. Click **Connect** and log in to your Gmail account.
 
 ---
 
